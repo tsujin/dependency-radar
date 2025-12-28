@@ -1,0 +1,6 @@
+name: Dependency Radar
+description: Scan Python dependencies for version drift and vulnerabilities
+author: tsujin
+runs:
+  using: docker
+  image: Dockerfile
