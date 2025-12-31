@@ -24,3 +24,28 @@ def test_parse_requirements_txt(tmp_path):
         {"name": "flask", "version": "<3.0,>=2.0"},
     ]
     assert deps == expected
+
+
+def test_parse_pyproject_toml(tmp_path):
+    pyproject_file = tmp_path / "pyproject.toml"
+    pyproject_file.write_text("""
+    [tool.poetry.dependencies]
+    python = "^3.8"
+    requests = ">=2.0.0"
+    numpy = "==1.21.0"
+
+    [tool.poetry.dev-dependencies]
+    pytest = "^6.2"
+    black = ">=21.9b0"
+    requests = ">=2.0.0"
+    """)
+
+    deps = parse_dependencies(str(tmp_path))
+    expected = [
+        {"name": "python", "version": "^3.8"},
+        {"name": "requests", "version": ">=2.0.0"},
+        {"name": "numpy", "version": "==1.21.0"},
+        {"name": "pytest", "version": "^6.2"},
+        {"name": "black", "version": ">=21.9b0"},
+    ]
+    assert deps == expected

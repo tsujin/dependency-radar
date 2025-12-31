@@ -32,12 +32,12 @@ def parse_pyproject_toml(file_path: Path) -> List[Dependency]:
 
     dependencies = []
     for section in ["dependencies", "dev-dependencies"]:
-        deps = data.get("tool", {}).get("poetry", {}).get(section, [])
-        for dep in deps:
-            requirement = Requirement(dep)
+        deps = data.get("tool", {}).get("poetry", {}).get(section, {})
+        for name, version in deps.items():
+            # Store raw version string from Poetry (preserves ^ and ~ syntax)
             dependencies.append({
-                "name": requirement.name,
-                "version": str(requirement.specifier) if requirement.specifier else "Any"
+                "name": name,
+                "version": version if version != "*" else "Any"
             })
 
     return deduplicate_dependencies(dependencies)
