@@ -49,3 +49,37 @@ def test_parse_pyproject_toml(tmp_path):
         {"name": "black", "version": ">=21.9b0"},
     ]
     assert deps == expected
+
+
+def test_parse_pyproject_wildcard(tmp_path):
+    pyproject_file = tmp_path / "pyproject.toml"
+    pyproject_file.write_text("""
+    [tool.poetry.dependencies]
+    somepkg = "*"
+    another = "^1.2.3"
+
+    [tool.poetry.dev-dependencies]
+    devpkg = "*"
+    """)
+
+    deps = parse_dependencies(str(tmp_path))
+    expected = [
+        {"name": "somepkg", "version": "Any"},
+        {"name": "another", "version": "^1.2.3"},
+        {"name": "devpkg", "version": "Any"},
+    ]
+    assert deps == expected
+
+
+def test_parse_requirements_wildcard_minor(tmp_path):
+    req_file = tmp_path / "requirements.txt"
+    req_file.write_text("""
+    django==4.2.*
+    """)
+
+    deps = parse_dependencies(str(tmp_path))
+    expected = [
+        {"name": "django", "version": "==4.2.*"},
+    ]
+    assert deps == expected
+
